@@ -1,0 +1,8 @@
+{
+  "name": "VM233.ExcelLocalization.Editor.Tests",
+  "references": ["VM233.ExcelLocalization.Editor", "Unity.Localization", "Unity.Localization.Editor", "Unity.Addressables.Editor"],
+  "includePlatforms": ["Editor"],
+  "optionalUnityReferences": ["TestAssemblies"],
+  "overrideReferences": true,
+  "precompiledReferences": ["nunit.framework.dll", "NPOI.Core.dll", "NPOI.OOXML.dll", "NPOI.OpenXml4Net.dll", "NPOI.OpenXmlFormats.dll"]
+}

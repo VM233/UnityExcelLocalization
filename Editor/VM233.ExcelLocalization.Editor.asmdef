@@ -1,0 +1,8 @@
+{
+  "name": "VM233.ExcelLocalization.Editor",
+  "rootNamespace": "VM233.ExcelLocalization",
+  "references": ["Unity.Localization", "Unity.Localization.Editor"],
+  "includePlatforms": ["Editor"],
+  "overrideReferences": true,
+  "precompiledReferences": ["NPOI.Core.dll", "NPOI.OOXML.dll", "NPOI.OpenXml4Net.dll", "NPOI.OpenXmlFormats.dll"]
+}

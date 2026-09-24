@@ -1,0 +1,336 @@
+[
+  {
+    "id": "NPOI",
+    "version": "2.7.4",
+    "framework": "netstandard2.1",
+    "source": "https://api.nuget.org/v3-flatcontainer/npoi/2.7.4/npoi.2.7.4.nupkg",
+    "packageSha256": "1eb282e3d0530b1476fe32515a0c2e2ec393bead4aca7467051d97925b2891cb",
+    "files": [
+      {
+        "path": "NPOI.Core.dll",
+        "sha256": "2e702e54696d985323237424fc507a0dc2504ae9343fc691956b393e5c480f76"
+      },
+      {
+        "path": "NPOI.OOXML.dll",
+        "sha256": "c89bfacc41e2ffad5ec0a1c8952a45202522972a73a2637533b4cf932baaf1e3"
+      },
+      {
+        "path": "NPOI.OpenXml4Net.dll",
+        "sha256": "e0223d563663672082cb1bbc0d1c45a54f09da801748f087a2eec73d2cc4e09c"
+      },
+      {
+        "path": "NPOI.OpenXmlFormats.dll",
+        "sha256": "b0cfd59441aeb67edb02feccdd11b6095c60cb7ece61d951c6778659c0b4dd15"
+      }
+    ],
+    "licenses": [
+      "Licenses/NPOI/LICENSE.txt"
+    ],
+    "license": "Apache-2.0"
+  },
+  {
+    "id": "BouncyCastle.Cryptography",
+    "version": "2.6.2",
+    "framework": "netstandard2.0",
+    "source": "https://api.nuget.org/v3-flatcontainer/bouncycastle.cryptography/2.6.2/bouncycastle.cryptography.2.6.2.nupkg",
+    "packageSha256": "623936fb1fd171579c706390390711282898cf2c759a5167852e5ab82208f8cb",
+    "files": [
+      {
+        "path": "BouncyCastle.Cryptography.dll",
+        "sha256": "7419a1723e300f6b772bf8153138f92da1bc47fc7d7fe096bdfacdff88d6751f"
+      }
+    ],
+    "licenses": [
+      "Licenses/BouncyCastle.Cryptography/LICENSE.md"
+    ],
+    "license": "MIT"
+  },
+  {
+    "id": "Enums.NET",
+    "version": "5.0.0",
+    "framework": "netstandard2.1",
+    "source": "https://api.nuget.org/v3-flatcontainer/enums.net/5.0.0/enums.net.5.0.0.nupkg",
+    "packageSha256": "f1c45954ebaedfc72ca3b98d00489fc6737ebf45b74fbc41fae478481bd39307",
+    "files": [
+      {
+        "path": "Enums.NET.dll",
+        "sha256": "5edc1f77d6c3b0d8dfb1d38b6a7517257edf55973f82af3968c4961b6edaaf68"
+      }
+    ],
+    "licenses": [
+      "Licenses/Enums.NET/LICENSE.txt"
+    ],
+    "license": "MIT",
+    "licenseSource": "https://raw.githubusercontent.com/TylerBrinkley/Enums.NET/1ce2a8836bc40c16fc99cb6ca4f4ceceba713724/LICENSE.md"
+  },
+  {
+    "id": "ExtendedNumerics.BigDecimal",
+    "version": "2025.1001.2.129",
+    "framework": "netstandard2.1",
+    "source": "https://api.nuget.org/v3-flatcontainer/extendednumerics.bigdecimal/2025.1001.2.129/extendednumerics.bigdecimal.2025.1001.2.129.nupkg",
+    "packageSha256": "2c0943f525ac29f5f132ed174eac4f06f5ae37a32b067113ad6b3c055343b159",
+    "files": [
+      {
+        "path": "ExtendedNumerics.BigDecimal.dll",
+        "sha256": "a215118b83c4ccf0bff4f385630473108d56884fa2b2ed865121e206800c32ff"
+      }
+    ],
+    "licenses": [
+      "Licenses/ExtendedNumerics.BigDecimal/LICENSE.txt"
+    ],
+    "license": "MIT",
+    "licenseSource": "https://raw.githubusercontent.com/AdamWhiteHat/BigDecimal/8d3de28cf6ee59e9c6be864dacdba7d450c2a026/LICENSE.txt"
+  },
+  {
+    "id": "MathNet.Numerics.Signed",
+    "version": "5.0.0",
+    "framework": "netstandard2.0",
+    "source": "https://api.nuget.org/v3-flatcontainer/mathnet.numerics.signed/5.0.0/mathnet.numerics.signed.5.0.0.nupkg",
+    "packageSha256": "efacb58da2fe69baa8c8fdcae27f69845d52d614e9ca5930fffbd31ee9113947",
+    "files": [
+      {
+        "path": "MathNet.Numerics.dll",
+        "sha256": "3b535af847e0e372565e22e98fa239ad9717997e6cb2a28b20899f82abbe8b86"
+      }
+    ],
+    "licenses": [
+      "Licenses/MathNet.Numerics.Signed/LICENSE.txt"
+    ],
+    "license": "MIT",
+    "licenseSource": "https://raw.githubusercontent.com/mathnet/mathnet-numerics/v5.0.0/LICENSE.md"
+  },
+  {
+    "id": "Microsoft.IO.RecyclableMemoryStream",
+    "version": "3.0.1",
+    "framework": "netstandard2.1",
+    "source": "https://api.nuget.org/v3-flatcontainer/microsoft.io.recyclablememorystream/3.0.1/microsoft.io.recyclablememorystream.3.0.1.nupkg",
+    "packageSha256": "ba7160ff911c53f5ca25ba1be06b500b8dd87608b95637811acee17e18f8118a",
+    "files": [
+      {
+        "path": "Microsoft.IO.RecyclableMemoryStream.dll",
+        "sha256": "7ee7044aa40bef2d815afdcca1b8020c89063f53242f0cecc954fef374814ef8"
+      }
+    ],
+    "licenses": [
+      "Licenses/Microsoft.IO.RecyclableMemoryStream/LICENSE.txt"
+    ],
+    "license": "MIT",
+    "licenseSource": "https://raw.githubusercontent.com/microsoft/Microsoft.IO.RecyclableMemoryStream/e29a28387da9018fa9605a1dcb3f7a0435aa9974/LICENSE"
+  },
+  {
+    "id": "SharpZipLib",
+    "version": "1.4.2",
+    "framework": "netstandard2.1",
+    "source": "https://api.nuget.org/v3-flatcontainer/sharpziplib/1.4.2/sharpziplib.1.4.2.nupkg",
+    "packageSha256": "fe0895aa2930a2b1b65caa9f37db8bca35125ebdf9cc1b99d855f6afc5ff5946",
+    "files": [
+      {
+        "path": "ICSharpCode.SharpZipLib.dll",
+        "sha256": "47d3ad0e7b4305f2cdb1e0e84c5a985c8c134ddb6cd275c672e8321168a1f8b8"
+      }
+    ],
+    "licenses": [
+      "Licenses/SharpZipLib/LICENSE.txt"
+    ],
+    "license": "MIT",
+    "licenseSource": "https://raw.githubusercontent.com/icsharpcode/SharpZipLib/33f64eb0f28cdd2b084cb822fcc224c7c5aba553/LICENSE.txt"
+  },
+  {
+    "id": "SixLabors.Fonts",
+    "version": "1.0.1",
+    "framework": "netstandard2.1",
+    "source": "https://api.nuget.org/v3-flatcontainer/sixlabors.fonts/1.0.1/sixlabors.fonts.1.0.1.nupkg",
+    "packageSha256": "7e8c7a7fd679c6e9d55e2cbbd4a4d291bd038ab30dd34b6e5250a1ca9f7a9222",
+    "files": [
+      {
+        "path": "SixLabors.Fonts.dll",
+        "sha256": "b99242bba8943c892d0960266a4d385a060486a8e178f2fe97c71f1ae7a87643"
+      }
+    ],
+    "licenses": [
+      "Licenses/SixLabors.Fonts/LICENSE.txt"
+    ],
+    "license": "Apache-2.0",
+    "licenseSource": "https://raw.githubusercontent.com/SixLabors/Fonts/be8883caf13f364292508274d68c39c2455ec3e2/LICENSE"
+  },
+  {
+    "id": "SixLabors.ImageSharp",
+    "version": "2.1.11",
+    "framework": "netstandard2.1",
+    "source": "https://api.nuget.org/v3-flatcontainer/sixlabors.imagesharp/2.1.11/sixlabors.imagesharp.2.1.11.nupkg",
+    "packageSha256": "356baef3705adadc196c9ddb808e88a7a72936342a2e01e1f967de96d42f5b50",
+    "files": [
+      {
+        "path": "SixLabors.ImageSharp.dll",
+        "sha256": "7c206c21a178864c269682e848bc8d86dd9ba132bf87bfa21f63e8d7c20a34f6"
+      }
+    ],
+    "licenses": [
+      "Licenses/SixLabors.ImageSharp/LICENSE.txt"
+    ],
+    "license": "Apache-2.0",
+    "licenseSource": "https://raw.githubusercontent.com/SixLabors/ImageSharp/cb115c2293b63155ce29ee1e168024add20bcf28/LICENSE"
+  },
+  {
+    "id": "System.ComponentModel.Annotations",
+    "version": "5.0.0",
+    "framework": "netstandard2.1",
+    "source": "https://api.nuget.org/v3-flatcontainer/system.componentmodel.annotations/5.0.0/system.componentmodel.annotations.5.0.0.nupkg",
+    "packageSha256": "d29493d541e0a5e13ac49ad87f947e53b0302251f7ad50b74a982e8a523f3008",
+    "files": [
+      {
+        "path": "System.ComponentModel.Annotations.dll",
+        "sha256": "c46069e29ad23fee7f5d2ced736ffea27b0177f82341296d9af6325acf821c69"
+      }
+    ],
+    "licenses": [
+      "Licenses/System.ComponentModel.Annotations/LICENSE.TXT",
+      "Licenses/System.ComponentModel.Annotations/THIRD-PARTY-NOTICES.TXT"
+    ],
+    "license": "MIT"
+  },
+  {
+    "id": "System.Formats.Asn1",
+    "version": "8.0.1",
+    "framework": "netstandard2.0",
+    "source": "https://api.nuget.org/v3-flatcontainer/system.formats.asn1/8.0.1/system.formats.asn1.8.0.1.nupkg",
+    "packageSha256": "99acbf5a0f9eb269b5375e244131b81123018be19028fa7466bac1a3fa3a3973",
+    "files": [
+      {
+        "path": "System.Formats.Asn1.dll",
+        "sha256": "5aa5bf6a74f14573b55da9d30e30132def943862025244fa4d9b9abec0313a77"
+      }
+    ],
+    "licenses": [
+      "Licenses/System.Formats.Asn1/LICENSE.TXT",
+      "Licenses/System.Formats.Asn1/THIRD-PARTY-NOTICES.TXT"
+    ],
+    "license": "MIT"
+  },
+  {
+    "id": "System.Runtime.CompilerServices.Unsafe",
+    "version": "6.0.0",
+    "framework": "netstandard2.0",
+    "source": "https://api.nuget.org/v3-flatcontainer/system.runtime.compilerservices.unsafe/6.0.0/system.runtime.compilerservices.unsafe.6.0.0.nupkg",
+    "packageSha256": "6c41b53e70e9eee298cff3a02ce5acdd15b04125589be0273f0566026720a762",
+    "files": [
+      {
+        "path": "System.Runtime.CompilerServices.Unsafe.dll",
+        "sha256": "01748200f2400c742aa689f1f5101bd6298efdfd92c00c18f4fa473847235ba9"
+      }
+    ],
+    "licenses": [
+      "Licenses/System.Runtime.CompilerServices.Unsafe/LICENSE.TXT",
+      "Licenses/System.Runtime.CompilerServices.Unsafe/THIRD-PARTY-NOTICES.TXT"
+    ],
+    "license": "MIT"
+  },
+  {
+    "id": "System.Security.AccessControl",
+    "version": "6.0.0",
+    "framework": "netstandard2.0",
+    "source": "https://api.nuget.org/v3-flatcontainer/system.security.accesscontrol/6.0.0/system.security.accesscontrol.6.0.0.nupkg",
+    "packageSha256": "a8ec961016cdaf7123c92f9eb451bcff331bb8f8c0f8ef9d8bbd7b24ff42c728",
+    "files": [
+      {
+        "path": "System.Security.AccessControl.dll",
+        "sha256": "b122549811ca87f86f4cf651357bc312af01aa93a2f27750daf434cbe5901471"
+      }
+    ],
+    "licenses": [
+      "Licenses/System.Security.AccessControl/LICENSE.TXT",
+      "Licenses/System.Security.AccessControl/THIRD-PARTY-NOTICES.TXT"
+    ],
+    "license": "MIT"
+  },
+  {
+    "id": "System.Security.Cryptography.Pkcs",
+    "version": "8.0.1",
+    "framework": "netstandard2.1",
+    "source": "https://api.nuget.org/v3-flatcontainer/system.security.cryptography.pkcs/8.0.1/system.security.cryptography.pkcs.8.0.1.nupkg",
+    "packageSha256": "28c348909df243fe4ee962213e3c8021aaecbc8321929dba03a69bcb92a49de5",
+    "files": [
+      {
+        "path": "System.Security.Cryptography.Pkcs.dll",
+        "sha256": "bbaebc1ef6f4d953820aea72774392396e6a7a2cafc3d76b71ba65b2635c7473"
+      }
+    ],
+    "licenses": [
+      "Licenses/System.Security.Cryptography.Pkcs/LICENSE.TXT",
+      "Licenses/System.Security.Cryptography.Pkcs/THIRD-PARTY-NOTICES.TXT"
+    ],
+    "license": "MIT"
+  },
+  {
+    "id": "System.Security.Cryptography.Xml",
+    "version": "8.0.2",
+    "framework": "netstandard2.0",
+    "source": "https://api.nuget.org/v3-flatcontainer/system.security.cryptography.xml/8.0.2/system.security.cryptography.xml.8.0.2.nupkg",
+    "packageSha256": "f530a6572301e3e072fe2a54f2f7580ed4a7c35b6491e6e75d7551753efcfb6f",
+    "files": [
+      {
+        "path": "System.Security.Cryptography.Xml.dll",
+        "sha256": "590d512b19106549c9a78b8f2bed9a2eddbfefc8103be8204b087384ce717b30"
+      }
+    ],
+    "licenses": [
+      "Licenses/System.Security.Cryptography.Xml/LICENSE.TXT",
+      "Licenses/System.Security.Cryptography.Xml/THIRD-PARTY-NOTICES.TXT"
+    ],
+    "license": "MIT"
+  },
+  {
+    "id": "System.Security.Principal.Windows",
+    "version": "5.0.0",
+    "framework": "netstandard2.0",
+    "source": "https://api.nuget.org/v3-flatcontainer/system.security.principal.windows/5.0.0/system.security.principal.windows.5.0.0.nupkg",
+    "packageSha256": "081390c25f6f78592b28ada853c24514488a221fe9f9a24efaaf5373643ff3d6",
+    "files": [
+      {
+        "path": "System.Security.Principal.Windows.dll",
+        "sha256": "7828dfd952a9fd49404477baff714849177d9f18c0654adafadbdcafb4b21f47"
+      }
+    ],
+    "licenses": [
+      "Licenses/System.Security.Principal.Windows/LICENSE.TXT",
+      "Licenses/System.Security.Principal.Windows/THIRD-PARTY-NOTICES.TXT"
+    ],
+    "license": "MIT"
+  },
+  {
+    "id": "System.Text.Encoding.CodePages",
+    "version": "5.0.0",
+    "framework": "netstandard2.0",
+    "source": "https://api.nuget.org/v3-flatcontainer/system.text.encoding.codepages/5.0.0/system.text.encoding.codepages.5.0.0.nupkg",
+    "packageSha256": "609e6326a9153e9fba7c4cd25ce9b0d6c352772801e51c7b4c9d13acd4bfc2ae",
+    "files": [
+      {
+        "path": "System.Text.Encoding.CodePages.dll",
+        "sha256": "51ce387387a8998b2f27a55a82175a696a46ff294e0dc33bf2690e2d03e456cf"
+      }
+    ],
+    "licenses": [
+      "Licenses/System.Text.Encoding.CodePages/LICENSE.TXT",
+      "Licenses/System.Text.Encoding.CodePages/THIRD-PARTY-NOTICES.TXT"
+    ],
+    "license": "MIT"
+  },
+  {
+    "id": "ZString",
+    "version": "2.6.0",
+    "framework": "netstandard2.1",
+    "source": "https://api.nuget.org/v3-flatcontainer/zstring/2.6.0/zstring.2.6.0.nupkg",
+    "packageSha256": "f50fcbd523e623ea15c6f501233db4da6527f9456ca15ff2d8e7e1a291d7cdea",
+    "files": [
+      {
+        "path": "ZString.dll",
+        "sha256": "0a816223fd454f6c2790e96a854c703edb0a4e33234e7e6312ae75964fee480d"
+      }
+    ],
+    "licenses": [
+      "Licenses/ZString/LICENSE.txt"
+    ],
+    "license": "MIT",
+    "licenseSource": "https://raw.githubusercontent.com/Cysharp/ZString/3156134075b89a162fe95350a2e92a4c85ccca59/LICENSE"
+  }
+]

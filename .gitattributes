@@ -1,0 +1,7 @@
+* text=auto
+*.cs text eol=crlf
+*.meta text eol=lf
+*.json text eol=lf
+*.asmdef text eol=lf
+*.dll -filter -diff -merge -text
+*.xlsx -filter -diff -merge -text
