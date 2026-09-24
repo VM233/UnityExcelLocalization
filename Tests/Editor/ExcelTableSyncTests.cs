@@ -9,6 +9,7 @@ using UnityEditor;
 using UnityEditor.AddressableAssets;
 using UnityEditor.AddressableAssets.Settings;
 using UnityEditor.Localization;
+using UnityEditor.Localization.Addressables;
 using UnityEngine;
 using UnityEngine.Localization;
 using UnityEngine.Localization.Tables;
@@ -24,6 +25,10 @@ namespace VM233.ExcelLocalization.Tests
         private StringTableCollection collection;
         private AddressableAssetSettings previousAddressables;
         private AddressableAssetSettingsDefaultObject previousDefault;
+        private AddressableGroupRules previousRules;
+        private AddressableGroupRules testRules;
+        private AddressableAssetSettings testAddressables;
+        private AddressableAssetGroup[] previousGroups;
 
         [SetUp]
         public void Setup()
@@ -32,9 +37,14 @@ namespace VM233.ExcelLocalization.Tests
             directory = "Assets/ExcelLocalizationTests_" + suffix;
             AssetDatabase.CreateFolder("Assets", "ExcelLocalizationTests_" + suffix);
             previousAddressables = AddressableAssetSettingsDefaultObject.Settings;
+            previousGroups = previousAddressables == null ? Array.Empty<AddressableAssetGroup>() : previousAddressables.groups.ToArray();
+            previousRules = AddressableGroupRules.Instance;
+            testRules = ScriptableObject.CreateInstance<AddressableGroupRules>();
+            AddressableGroupRules.Instance = testRules;
             EditorBuildSettings.TryGetConfigObject(AddressableAssetSettingsDefaultObject.kDefaultConfigObjectName,
                 out previousDefault);
             var settings = AddressableAssetSettings.Create(directory + "/Addressables", "Settings", true, true);
+            testAddressables = settings;
             var defaults = ScriptableObject.CreateInstance<AddressableAssetSettingsDefaultObject>();
             AssetDatabase.CreateAsset(defaults, directory + "/AddressablesDefault.asset");
             EditorBuildSettings.AddConfigObject(AddressableAssetSettingsDefaultObject.kDefaultConfigObjectName,
@@ -54,6 +64,10 @@ namespace VM233.ExcelLocalization.Tests
         [TearDown]
         public void Cleanup()
         {
+            var registeredTestGroups = previousAddressables == null ? Array.Empty<AddressableAssetGroup>() :
+                previousAddressables.groups.Except(previousGroups).ToArray();
+            var onlyOwnedGroups = registeredTestGroups.All(group => group != null &&
+                AssetDatabase.GetAssetPath(group).StartsWith(directory + "/", StringComparison.Ordinal));
             if (binding != null)
             {
                 binding.Configure(workbookPath, collection, automatic: false);
@@ -75,6 +89,14 @@ namespace VM233.ExcelLocalization.Tests
                 }
             }
 
+            // Group import callbacks consult the active settings. Remove owned groups before restoring the project.
+            foreach (var group in testAddressables.groups.ToArray())
+            {
+                testAddressables.RemoveGroup(group);
+            }
+
+            AddressableGroupRules.Instance = previousRules;
+            UnityEngine.Object.DestroyImmediate(testRules);
             AddressableAssetSettingsDefaultObject.Settings = previousAddressables;
             if (previousDefault == null)
             {
@@ -88,7 +110,22 @@ namespace VM233.ExcelLocalization.Tests
 
             AssetDatabase.DeleteAsset(directory);
             File.Delete(workbookPath);
+            if (previousAddressables != null && onlyOwnedGroups && registeredTestGroups.Length > 0)
+            {
+                // Addressables 1.25 keeps its importer subscribed to the original settings instance.
+                // It registers imported groups even when another settings asset is active.
+                previousAddressables.groups.Clear();
+                previousAddressables.groups.AddRange(previousGroups);
+                previousAddressables.SetDirty(AddressableAssetSettings.ModificationEvent.GroupRemoved, null, false, true);
+            }
+
             AssetDatabase.SaveAssets();
+            Assert.IsTrue(onlyOwnedGroups, "Unexpected groups were added to the consuming project during a test.");
+            if (previousAddressables != null)
+            {
+                CollectionAssert.AreEquivalent(previousGroups, previousAddressables.groups,
+                    "Tests must not register their groups in the consuming project.");
+            }
         }
 
         private void Write(params string[][] rows)
