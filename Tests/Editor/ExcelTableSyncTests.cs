@@ -213,6 +213,22 @@ namespace VM233.ExcelLocalization.Tests
         }
 
         [Test]
+        public void BuildPreparationSynchronizesBeforeBundlesAndRejectsLaterChanges()
+        {
+            ExcelTableSynchronizer.Sync(binding);
+            Write(new[] { "Key", "zh-CN", "en" }, new[] { "close", "返回", "Back" });
+            var guard = new ExcelTableBuildGuard();
+            Assert.Less(guard.callbackOrder, 1, "Sync must run before the Addressables player build processor.");
+            Assert.Throws<UnityEditor.Build.BuildFailedException>(() => guard.OnPreprocessBuild(null));
+            guard.PrepareForBuild(null);
+            Assert.AreEqual("Back", Table("en").GetEntry("close").Value);
+            guard.OnPreprocessBuild(null);
+            Write(new[] { "Key", "zh-CN", "en" }, new[] { "close", "关闭", "Close" });
+            Assert.Throws<UnityEditor.Build.BuildFailedException>(() => guard.OnPreprocessBuild(null));
+            Assert.AreEqual("Back", Table("en").GetEntry("close").Value);
+        }
+
+        [Test]
         public void EmptyWorkbookDeletesEntriesAndManualTableChangesAreReplaced()
         {
             ExcelTableSynchronizer.Sync(binding);

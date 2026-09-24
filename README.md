@@ -28,7 +28,7 @@ The first column must be `Key`. Remaining headers are canonical locale codes. Ea
 
 Translations use standard composite formatting: `{0}`, `{1}`, up to `{31}`. All translations in a row must use the same argument indices. Escape literal braces as `{{` and `}}`. Entries are imported as regular strings, not Smart Strings.
 
-Save Excel and leave the editor in Edit Mode. It checks the file every second and waits for the content to settle before syncing. **Sync Now** and **Tools / Excel Localization / Sync All** are also available. Play Mode and builds synchronize all bindings before continuing.
+Save Excel and leave the editor in Edit Mode. It checks the file every second and waits for the content to settle before syncing. **Sync Now** and **Tools / Excel Localization / Sync All** are also available. Play Mode synchronizes all bindings before continuing. Player builds synchronize before Addressables builds its bundles, then verify again before the Player is built; edits during a build cause validation to fail instead of publishing stale translations.
 
 ## What a sync changes
 
