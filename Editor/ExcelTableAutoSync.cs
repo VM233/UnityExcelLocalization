@@ -1,7 +1,6 @@
 using System;
 using System.Collections.Generic;
-using System.IO;
-using System.Security.Cryptography;
+using System.Linq;
 using UnityEditor;
 using UnityEngine;
 
@@ -10,26 +9,27 @@ namespace VM233.ExcelLocalization
     [InitializeOnLoad]
     public static class ExcelTableAutoSync
     {
-        private const double POLL_SECONDS = 1;
-        private static readonly Dictionary<int, State> states = new Dictionary<int, State>();
-        private static double nextPoll;
-
-        private sealed class State
-        {
-            public string observed;
-            public string applied;
-            public string error;
-            public string status = "Waiting for a stable workbook.";
-        }
+        private static readonly HashSet<string> changedAssets = new HashSet<string>(StringComparer.Ordinal);
+        private static readonly Dictionary<int, string> statuses = new Dictionary<int, string>();
+        private static bool synchronizeAll = true;
+        private static bool scheduled;
 
         static ExcelTableAutoSync()
         {
-            EditorApplication.update += Update;
             EditorApplication.playModeStateChanged += OnPlayModeChanged;
+            Schedule();
         }
 
-        public static string GetStatus(ExcelTableBinding binding) =>
-            states.TryGetValue(binding.GetInstanceID(), out var state) ? state.status : "Not synchronized in this session.";
+        public static string GetStatus(ExcelTableBinding binding)
+        {
+            if (!binding.AutoSync)
+            {
+                return "Automatic synchronization is disabled.";
+            }
+
+            return statuses.TryGetValue(binding.GetInstanceID(), out var status)
+                ? status : "Waiting for the next Excel import.";
+        }
 
         [MenuItem("Tools/Excel Localization/Sync All")]
         public static void SyncAll()
@@ -38,89 +38,103 @@ namespace VM233.ExcelLocalization
             Debug.Log($"Excel Localization: synchronized {count} changed collections.");
         }
 
-        private static void Update()
+        public static void RequestSync(ExcelTableBinding binding)
         {
-            if (EditorApplication.timeSinceStartup < nextPoll || EditorApplication.isCompiling ||
-                EditorApplication.isUpdating || EditorApplication.isPlayingOrWillChangePlaymode ||
-                BuildPipeline.isBuildingPlayer)
+            changedAssets.Add(AssetDatabase.GetAssetPath(binding));
+            Schedule();
+        }
+
+        internal static void OnAssetsImported(string[] imported, string[] deleted, string[] moved,
+            string[] movedFrom, bool domainReload)
+        {
+            synchronizeAll |= domainReload || deleted.Any(IsWorkbook);
+            foreach (var path in imported.Concat(deleted).Concat(moved).Concat(movedFrom))
+            {
+                if (IsWorkbook(path) || path.EndsWith(".asset", StringComparison.OrdinalIgnoreCase))
+                {
+                    changedAssets.Add(path);
+                }
+            }
+
+            if (synchronizeAll || changedAssets.Count > 0)
+            {
+                Schedule();
+            }
+        }
+
+        private static bool IsWorkbook(string path) => path.EndsWith(".xlsx", StringComparison.OrdinalIgnoreCase) &&
+            !System.IO.Path.GetFileName(path).StartsWith("~$", StringComparison.Ordinal);
+
+        private static void Schedule()
+        {
+            if (scheduled || EditorApplication.isPlayingOrWillChangePlaymode)
             {
                 return;
             }
 
-            nextPoll = EditorApplication.timeSinceStartup + POLL_SECONDS;
-            var active = new HashSet<int>();
-            foreach (var binding in ExcelTableSynchronizer.FindBindings())
+            scheduled = true;
+            EditorApplication.delayCall += SynchronizeImportedAssets;
+        }
+
+        private static void SynchronizeImportedAssets()
+        {
+            scheduled = false;
+            if (EditorApplication.isPlayingOrWillChangePlaymode)
             {
-                var id = binding.GetInstanceID();
-                active.Add(id);
-                if (!binding.AutoSync || binding.Collection == null || string.IsNullOrWhiteSpace(binding.SourcePath))
+                return;
+            }
+
+            if (EditorApplication.isCompiling || EditorApplication.isUpdating || BuildPipeline.isBuildingPlayer)
+            {
+                Schedule();
+                return;
+            }
+
+            var paths = new HashSet<string>(changedAssets, StringComparer.Ordinal);
+            var all = synchronizeAll;
+            changedAssets.Clear();
+            synchronizeAll = false;
+            var bindings = ExcelTableSynchronizer.FindBindings();
+            var active = new HashSet<int>(bindings.Select(binding => binding.GetInstanceID()));
+            foreach (var id in statuses.Keys.Where(id => !active.Contains(id)).ToArray())
+            {
+                statuses.Remove(id);
+            }
+
+            foreach (var binding in bindings)
+            {
+                if (!binding.AutoSync || binding.Collection == null ||
+                    (!all && !paths.Contains(binding.SourcePath) && !paths.Contains(AssetDatabase.GetAssetPath(binding))))
                 {
                     continue;
                 }
 
-                if (!states.TryGetValue(id, out var state))
-                {
-                    states.Add(id, state = new State());
-                }
-
+                var id = binding.GetInstanceID();
                 try
                 {
-                    var fingerprint = Fingerprint(binding);
-                    if (state.observed != fingerprint)
-                    {
-                        state.observed = fingerprint;
-                        state.status = "Waiting for the Excel save to finish.";
-                        continue;
-                    }
-
-                    if (state.applied == fingerprint)
-                    {
-                        state.error = null;
-                        state.status = "Already matches Excel.";
-                        continue;
-                    }
-
-                    var changed = ExcelTableSynchronizer.Sync(binding);
-                    state.applied = fingerprint;
-                    state.error = null;
-                    state.status = changed ? "Synchronized from Excel." : "Already matches Excel.";
+                    statuses[id] = ExcelTableSynchronizer.Sync(binding)
+                        ? "Synchronized from Excel." : "Already matches Excel.";
                 }
                 catch (Exception exception)
                 {
-                    state.status = exception.Message;
-                    if (state.error != state.status)
+                    if (!statuses.TryGetValue(id, out var previous) || previous != exception.Message)
                     {
-                        state.error = state.status;
-                        Debug.LogError("Excel Localization: " + state.status, binding);
+                        Debug.LogError("Excel Localization: " + exception.Message, binding);
                     }
-                }
-            }
 
-            foreach (var id in new List<int>(states.Keys))
-            {
-                if (!active.Contains(id))
-                {
-                    states.Remove(id);
-                }
-            }
-        }
-
-        private static string Fingerprint(ExcelTableBinding binding)
-        {
-            using (var file = new FileStream(binding.GetFullPath(), FileMode.Open, FileAccess.Read,
-                       FileShare.ReadWrite | FileShare.Delete))
-            {
-                using (var hash = SHA256.Create())
-                {
-                    return binding.SourcePath + "|" + binding.Worksheet + "|" +
-                        AssetDatabase.GetAssetPath(binding.Collection) + "|" +
-                        BitConverter.ToString(hash.ComputeHash(file));
+                    statuses[id] = exception.Message;
                 }
             }
         }
 
         private static void OnPlayModeChanged(PlayModeStateChange state)
         {
+            if (state == PlayModeStateChange.EnteredEditMode)
+            {
+                Schedule();
+                return;
+            }
+
             if (state != PlayModeStateChange.ExitingEditMode)
             {
                 return;

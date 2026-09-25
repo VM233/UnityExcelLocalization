@@ -50,15 +50,15 @@ namespace VM233.ExcelLocalization.Tests
             EditorBuildSettings.AddConfigObject(AddressableAssetSettingsDefaultObject.kDefaultConfigObjectName,
                 defaults, true);
             AddressableAssetSettingsDefaultObject.Settings = settings;
-            Directory.CreateDirectory("Library/ExcelLocalizationTests");
-            workbookPath = "Library/ExcelLocalizationTests/" + suffix + ".xlsx";
+            workbookPath = directory + "/Strings.xlsx";
             collection = LocalizationEditorSettings.CreateStringTableCollection(
                 "ExcelTest_" + suffix, directory, new List<Locale>());
+            Write(new[] { "Key", "zh-CN", "en" },
+                new[] { "greeting", "你好 {0}", "Hello {0}" }, new[] { "close", "关闭", "Close" });
+            AssetDatabase.ImportAsset(workbookPath);
             binding = ScriptableObject.CreateInstance<ExcelTableBinding>();
             binding.Configure(workbookPath, collection, automatic: false);
             AssetDatabase.CreateAsset(binding, directory + "/Binding.asset");
-            Write(new[] { "Key", "zh-CN", "en" },
-                new[] { "greeting", "你好 {0}", "Hello {0}" }, new[] { "close", "关闭", "Close" });
         }
 
         [TearDown]
@@ -70,7 +70,9 @@ namespace VM233.ExcelLocalization.Tests
                 AssetDatabase.GetAssetPath(group).StartsWith(directory + "/", StringComparison.Ordinal));
             if (binding != null)
             {
-                binding.Configure(workbookPath, collection, automatic: false);
+                var serialized = new SerializedObject(binding);
+                serialized.FindProperty("autoSync").boolValue = false;
+                serialized.ApplyModifiedPropertiesWithoutUndo();
             }
 
             if (collection != null)
@@ -109,7 +111,6 @@ namespace VM233.ExcelLocalization.Tests
             }
 
             AssetDatabase.DeleteAsset(directory);
-            File.Delete(workbookPath);
             if (previousAddressables != null && onlyOwnedGroups && registeredTestGroups.Length > 0)
             {
                 // Addressables 1.25 keeps its importer subscribed to the original settings instance.
@@ -286,22 +287,72 @@ namespace VM233.ExcelLocalization.Tests
             second.Configure(workbookPath, collection, automatic: false);
             AssetDatabase.CreateAsset(second, directory + "/Duplicate.asset");
             Assert.Throws<InvalidDataException>(() => ExcelTableSynchronizer.Sync(binding));
-            binding.Configure("../Outside.xlsx", collection, automatic: false);
-            Assert.Throws<InvalidDataException>(() => binding.GetFullPath());
-            binding.Configure(Path.GetFullPath(workbookPath), collection, automatic: false);
-            Assert.Throws<InvalidDataException>(() => binding.GetFullPath());
+            Assert.Throws<InvalidDataException>(() => binding.Configure("../Outside.xlsx", collection, automatic: false));
+            Assert.Throws<InvalidDataException>(() => binding.Configure("Assets/../Outside.xlsx", collection, automatic: false));
+            Assert.Throws<InvalidDataException>(() => binding.Configure(Path.GetFullPath(workbookPath), collection, automatic: false));
         }
 
         [UnityTest]
-        public IEnumerator FileChangesOutsideAssetsAreSynchronizedWithoutManualImport()
+        public IEnumerator AssetImportsSynchronizeChangedWorkbooksWithoutManualSync()
         {
             binding.Configure(workbookPath, collection);
+            AssetDatabase.ImportAsset(workbookPath, ImportAssetOptions.ForceUpdate);
             yield return WaitUntil(() => Table("en")?.GetEntry("close")?.Value == "Close");
             var id = collection.SharedData.GetId("close");
             Write(new[] { "Key", "zh-CN", "en" }, new[] { "close", "返回", "Back" });
+            AssetDatabase.ImportAsset(workbookPath, ImportAssetOptions.ForceUpdate);
             yield return WaitUntil(() => Table("en")?.GetEntry("close")?.Value == "Back");
             Assert.AreEqual(id, collection.SharedData.GetId("close"));
             Assert.IsNull(Table("en").GetEntry("greeting"));
+        }
+
+        [UnityTest]
+        public IEnumerator MovingWorkbookKeepsTheBindingAndSynchronizesFurtherEdits()
+        {
+            binding.Configure(workbookPath, collection);
+            AssetDatabase.ImportAsset(workbookPath, ImportAssetOptions.ForceUpdate);
+            yield return WaitUntil(() => Table("en")?.GetEntry("close")?.Value == "Close");
+            var id = collection.SharedData.GetId("close");
+            var guid = AssetDatabase.AssetPathToGUID(workbookPath);
+            var moved = directory + "/Renamed.xlsx";
+            Assert.IsEmpty(AssetDatabase.MoveAsset(workbookPath, moved));
+            workbookPath = moved;
+            Assert.AreEqual(moved, binding.SourcePath);
+            Assert.AreEqual(guid, AssetDatabase.AssetPathToGUID(moved));
+            Write(new[] { "Key", "zh-CN", "en" }, new[] { "close", "返回", "Back" });
+            AssetDatabase.ImportAsset(workbookPath, ImportAssetOptions.ForceUpdate);
+            yield return WaitUntil(() => Table("en")?.GetEntry("close")?.Value == "Back");
+            Assert.AreEqual(id, collection.SharedData.GetId("close"));
+        }
+
+        [UnityTest]
+        public IEnumerator InvalidImportPreservesTablesAndTheNextSaveRecovers()
+        {
+            binding.Configure(workbookPath, collection);
+            AssetDatabase.ImportAsset(workbookPath, ImportAssetOptions.ForceUpdate);
+            yield return WaitUntil(() => Table("en")?.GetEntry("close")?.Value == "Close");
+            Write(new[] { "Key", "zh-CN", "en" }, new[] { "close", "返回", "" });
+            var error = Assert.Throws<InvalidDataException>(() => ExcelTableSynchronizer.Sync(binding)).Message;
+            LogAssert.Expect(LogType.Error, "Excel Localization: " + error);
+            AssetDatabase.ImportAsset(workbookPath, ImportAssetOptions.ForceUpdate);
+            yield return WaitUntil(() => ExcelTableAutoSync.GetStatus(binding) == error);
+            Assert.AreEqual("Close", Table("en").GetEntry("close").Value);
+            Write(new[] { "Key", "zh-CN", "en" }, new[] { "close", "返回", "Back" });
+            AssetDatabase.ImportAsset(workbookPath, ImportAssetOptions.ForceUpdate);
+            yield return WaitUntil(() => Table("en")?.GetEntry("close")?.Value == "Back");
+        }
+
+        [UnityTest]
+        public IEnumerator DisabledBindingLeavesImportedChangesForManualSynchronization()
+        {
+            ExcelTableSynchronizer.Sync(binding);
+            Write(new[] { "Key", "zh-CN", "en" }, new[] { "close", "返回", "Back" });
+            AssetDatabase.ImportAsset(workbookPath, ImportAssetOptions.ForceUpdate);
+            yield return null;
+            yield return null;
+            Assert.AreEqual("Close", Table("en").GetEntry("close").Value);
+            ExcelTableSynchronizer.Sync(binding);
+            Assert.AreEqual("Back", Table("en").GetEntry("close").Value);
         }
 
         private static IEnumerator WaitUntil(Func<bool> condition)

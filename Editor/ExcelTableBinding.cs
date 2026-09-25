@@ -1,5 +1,6 @@
 using System;
 using System.IO;
+using UnityEditor;
 using UnityEditor.Localization;
 using UnityEngine;
 
@@ -9,7 +10,7 @@ namespace VM233.ExcelLocalization
     public sealed class ExcelTableBinding : ScriptableObject
     {
         [SerializeField]
-        private string sourcePath;
+        private DefaultAsset workbook;
 
         [SerializeField]
         private string worksheet = "Strings";
@@ -20,7 +21,7 @@ namespace VM233.ExcelLocalization
         [SerializeField]
         private bool autoSync = true;
 
-        public string SourcePath => sourcePath;
+        public string SourcePath => AssetDatabase.GetAssetPath(workbook);
 
         public string Worksheet => worksheet;
 
@@ -30,7 +31,13 @@ namespace VM233.ExcelLocalization
 
         public void Configure(string path, StringTableCollection target, string sheet = "Strings", bool automatic = true)
         {
-            sourcePath = path.Replace('\\', '/');
+            path = path.Replace('\\', '/');
+            ValidatePath(path);
+            workbook = AssetDatabase.LoadAssetAtPath<DefaultAsset>(path);
+            if (workbook == null)
+            {
+                throw new InvalidDataException(path + ": import the Excel file into Assets before assigning it.");
+            }
             collection = target;
             worksheet = sheet;
             autoSync = automatic;
@@ -38,18 +45,23 @@ namespace VM233.ExcelLocalization
 
         public string GetFullPath()
         {
-            if (string.IsNullOrWhiteSpace(sourcePath) || Path.IsPathRooted(sourcePath))
+            return ValidatePath(SourcePath);
+        }
+
+        private static string ValidatePath(string path)
+        {
+            if (string.IsNullOrWhiteSpace(path) || !path.StartsWith("Assets/", StringComparison.Ordinal))
             {
-                throw new InvalidDataException(name + ": use a project-relative Excel path.");
+                throw new InvalidDataException("Assign an Excel asset inside Assets.");
             }
 
             var root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."));
-            var fullPath = Path.GetFullPath(Path.Combine(root, sourcePath));
-            if (!fullPath.StartsWith(root + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) ||
+            var fullPath = Path.GetFullPath(Path.Combine(root, path));
+            if (!fullPath.StartsWith(Path.GetFullPath(Application.dataPath) + Path.DirectorySeparatorChar, StringComparison.OrdinalIgnoreCase) ||
                 !string.Equals(Path.GetExtension(fullPath), ".xlsx", StringComparison.OrdinalIgnoreCase) ||
                 Path.GetFileName(fullPath).StartsWith("~$", StringComparison.Ordinal))
             {
-                throw new InvalidDataException(name + ": select an .xlsx file inside the project, not an Excel lock file.");
+                throw new InvalidDataException("Select an .xlsx asset inside Assets, not an Excel lock file.");
             }
 
             return fullPath;

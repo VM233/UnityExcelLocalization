@@ -12,27 +12,33 @@ namespace VM233.ExcelLocalization
 
         public override void OnInspectorGUI()
         {
-            DrawDefaultInspector();
             var binding = (ExcelTableBinding)target;
+            if (DrawDefaultInspector())
+            {
+                ExcelTableAutoSync.RequestSync(binding);
+            }
             if (GUILayout.Button("Choose Excel File"))
             {
                 var path = EditorUtility.OpenFilePanel("Select localization workbook", "", "xlsx");
                 if (!string.IsNullOrEmpty(path))
                 {
-                    var root = Path.GetFullPath(Path.Combine(Application.dataPath, ".."))
+                    var root = Path.GetFullPath(Application.dataPath)
                         .Replace('\\', '/') + "/";
                     path = Path.GetFullPath(path).Replace('\\', '/');
                     if (path.StartsWith(root, StringComparison.OrdinalIgnoreCase))
                     {
                         Undo.RecordObject(binding, "Choose Excel workbook");
-                        binding.Configure(path.Substring(root.Length), binding.Collection, binding.Worksheet,
+                        var assetPath = "Assets/" + path.Substring(root.Length);
+                        AssetDatabase.ImportAsset(assetPath);
+                        binding.Configure(assetPath, binding.Collection, binding.Worksheet,
                             binding.AutoSync);
                         EditorUtility.SetDirty(binding);
+                        ExcelTableAutoSync.RequestSync(binding);
                         message = null;
                     }
                     else
                     {
-                        message = "Choose a workbook inside this Unity project.";
+                        message = "Choose a workbook inside Assets.";
                     }
                 }
             }

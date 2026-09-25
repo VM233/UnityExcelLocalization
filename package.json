@@ -1,6 +1,6 @@
 {
   "name": "com.vm233.excel-localization",
-  "version": "0.1.0",
+  "version": "0.2.0",
   "displayName": "Excel Localization",
   "description": "Keep Unity Localization string tables in sync with Excel workbooks.",
   "unity": "2022.3",
